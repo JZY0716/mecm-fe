@@ -54,16 +54,16 @@ export default new Router({
       name: 'hostOverview',
       component: () => import('../pages/host/Index.vue')
     },
-    {
-      path: '/mecm/system/mepm',
-      name: 'applcm',
-      component: () => import('../pages/system/Mepm.vue')
-    },
-    {
-      path: '/mecm/system/appstore',
-      name: 'appstore',
-      component: () => import('../pages/system/Appstore.vue')
-    },
+    // {
+    //   path: '/mecm/system/mepm',
+    //   name: 'applcm',
+    //   component: () => import('../pages/system/Mepm.vue')
+    // },
+    // {
+    //   path: '/mecm/system/appstore',
+    //   name: 'appstore',
+    //   component: () => import('../pages/system/Appstore.vue')
+    // },
     {
       path: '/mecm/resource/manager',
       name: 'resource',

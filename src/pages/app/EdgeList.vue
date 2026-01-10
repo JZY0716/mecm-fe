@@ -187,6 +187,26 @@
               ><em class="el-icon-success" />{{ item.status }}</span>
             </div>
           </el-form-item>
+          <!-- [新增] 2026-01-05 网络平面选择，移到IP地址下面 -->
+          <el-form-item
+            :label="$t('app.distriList.networkPlane')"
+            prop="selectedNetworkPlane"
+            label-width="140px"
+          >
+            <el-select
+              v-model="configForm.selectedNetworkPlane"
+              :placeholder="$t('app.distriList.selectNetworkPlane')"
+              :loading="isLoadingNetworkPlanes"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="option in networkPlaneOptions"
+                :key="option.value"
+                :label="option.label"
+                :value="option.value"
+              />
+            </el-select>
+          </el-form-item>
           <el-form-item
             :label="$t('app.distriList.appName')"
             prop="appName"
@@ -409,7 +429,8 @@ export default {
         appName: '',
         appInstanceDescription: '',
         appId: this.appId,
-        hwCapabilities: []
+        hwCapabilities: [],
+        selectedNetworkPlane: 'default' // [新增] 2026-01-05 选中的网络平面，默认为 default
       },
       dataLoading: true,
       tableData: [],
@@ -420,6 +441,10 @@ export default {
       distributionStatus: ['Distributed', 'Error'],
       serchData: null,
       hostList: [],
+      // [新增] 2026-01-05 网络平面动态选择功能
+      availableNetworkPlanes: {}, // 当前主机可用的网络平面 {"eth1": "n6-net-1", "eth2": "n6-net-2"}
+      networkPlaneOptions: [], // 网络平面下拉选项
+      isLoadingNetworkPlanes: false, // 加载网络平面数据的状态
       templateInputs: [],
       capabilities: ['GPU', 'NPU'],
       // 分发
@@ -455,6 +480,9 @@ export default {
         ],
         appInstanceDescription: [
           { required: true, message: this.$t('verify.descVerify'), trigger: 'blur' }
+        ],
+        selectedNetworkPlane: [
+          { required: true, message: '请选择网络平面', trigger: 'change' }
         ]
       }
     }
@@ -579,7 +607,8 @@ export default {
           appName: '',
           appInstanceDescription: '',
           appId: this.appId,
-          hwCapabilities: []
+          hwCapabilities: [],
+          selectedNetworkPlane: 'default' // 重置为默认值
         }
         this.hostList = []
         this.configForm.appPackageId = this.appPackageId
@@ -595,9 +624,13 @@ export default {
           })
           this.configForm.mecHost = array
           this.hostList = row
+          // [新增] 2026-01-05 批量部署时，查询第一个主机的网络平面
+          this.fetchHostNetworkPlanes(row[0].hostIp)
         } else {
           this.configForm.mecHost = row.hostIp
           this.hostList.push(row)
+          // [新增] 2026-01-05 单主机部署时，查询该主机的网络平面
+          this.fetchHostNetworkPlanes(row.hostIp)
         }
       }).catch(() => {
         this.$message({
@@ -608,6 +641,56 @@ export default {
         })
       })
     },
+    /**
+     * [新增] 2026-01-05 查询主机的网络平面配置
+     * @param {String} hostIp - 主机IP地址
+     */
+    fetchHostNetworkPlanes (hostIp) {
+      this.isLoadingNetworkPlanes = true
+      this.availableNetworkPlanes = {}
+      this.networkPlaneOptions = []
+
+      inventory.getMecHostRecord(hostIp).then(res => {
+        const networkPlanes = res.data.networkPlanes || {}
+        this.availableNetworkPlanes = networkPlanes
+        this.buildNetworkPlaneOptions(networkPlanes)
+        this.isLoadingNetworkPlanes = false
+      }).catch(error => {
+        console.error('Failed to fetch network planes:', error)
+        this.isLoadingNetworkPlanes = false
+        // 查询失败时，只显示默认选项
+        this.buildNetworkPlaneOptions({})
+      })
+    },
+    /**
+     * [新增] 2026-01-05 构建网络平面下拉选项
+     * @param {Object} networkPlanes - 网络平面对象 {"eth1": "n6-net-1", "eth2": "n6-net-2"}
+     */
+    buildNetworkPlaneOptions (networkPlanes) {
+      // 始终添加默认选项
+      const options = [{
+        label: this.$t('app.distriList.networkPlaneDefault'),
+        value: 'default'
+      }]
+
+      // 遍历 networkPlanes 添加物理直通平面
+      if (networkPlanes && typeof networkPlanes === 'object') {
+        Object.keys(networkPlanes).forEach(eth => {
+          const nad = networkPlanes[eth]
+          options.push({
+            label: `${this.$t('app.distriList.networkPlanePhysical')}(${nad})`,
+            value: nad
+          })
+        })
+      }
+
+      this.networkPlaneOptions = options
+
+      // 如果只有默认选项，自动选中
+      if (options.length === 1) {
+        this.configForm.selectedNetworkPlane = 'default'
+      }
+    },
     confirmToDeploy (configForm) {
       this.$refs[configForm].validate(valid => {
         if (valid) {
@@ -617,7 +700,11 @@ export default {
             appName: this.configForm.appName,
             appInstanceDescription: this.configForm.appInstanceDescription,
             mecHost: this.configForm.mecHost,
-            hwCapabilities: this.configForm.hwCapabilities
+            hwCapabilities: this.configForm.hwCapabilities,
+            // 携带选择的网络平面（默认选项时为 null）
+            networkPlane: this.configForm.selectedNetworkPlane !== 'default'
+              ? this.configForm.selectedNetworkPlane
+              : null
           }
           this.loading = true
           if (typeof (params.mecHost) === 'string') {

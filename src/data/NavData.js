@@ -53,29 +53,29 @@ const NavData = [
     'pageId': '2.3.1',
     'display': false
   },
-  {
-    'id': '2.4',
-    'name': 'Systems',
-    'path': '/systems',
-    'pageId': '2.4.1',
-    'display': false,
-    'children': [
-      {
-        'id': '2.4.1',
-        'name': 'MEPM',
-        'path': '/mecm/system/mepm',
-        'pageId': '2.4.1.1',
-        'display': false
-      },
-      {
-        'id': '2.4.2',
-        'name': 'App Store',
-        'path': '/mecm/system/appstore',
-        'pageId': '2.4.1.2',
-        'display': false
-      }
-    ]
-  },
+  // {
+  //   'id': '2.4',
+  //   'name': 'Systems',
+  //   'path': '/systems',
+  //   'pageId': '2.4.1',
+  //   'display': false,
+  //   'children': [
+  //     {
+  //       'id': '2.4.1',
+  //       'name': 'MEPM',
+  //       'path': '/mecm/system/mepm',
+  //       'pageId': '2.4.1.1',
+  //       'display': false
+  //     },
+  //     {
+  //       'id': '2.4.2',
+  //       'name': 'App Store',
+  //       'path': '/mecm/system/appstore',
+  //       'pageId': '2.4.1.2',
+  //       'display': false
+  //     }
+  //   ]
+  // },
   {
     'id': '2.5',
     'name': 'Resource Management',

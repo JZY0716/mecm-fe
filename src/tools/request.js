@@ -329,6 +329,10 @@ let inventory = {
   },
   syncMechost (ip) {
     return GET(inventoryApi + '/mepms/' + ip + '/mechost/sync')
+  },
+  // [新增] 2026-01-05 获取MEC主机详情（包含网络平面信息）
+  getMecHostRecord (hostIp) {
+    return GET(inventoryApi + '/tenants/' + getUserId() + '/mechosts/' + hostIp)
   }
 }
 
