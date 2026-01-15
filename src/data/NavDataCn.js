@@ -82,6 +82,14 @@ const NavDataCn = [
     'path': '/mecm/resource/manager',
     'pageId': '2.5.1',
     'display': false
+  },
+  {
+    'id': '2.6',
+    'name': '信令管理',
+    'path': '/mecm/signaling/manager',
+    'pageId': '2.6.1',
+    'display': true,
+    'authority': ['ROLE_MECM_ADMIN']
   }
 ]
 
