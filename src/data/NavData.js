@@ -83,6 +83,14 @@ const NavData = [
     'pageId': '2.5.1',
     'display': false
   }
+  {
+    'id': '2.6',
+    'name': 'signaling manager',
+    'path': '/mecm/signaling/manager',
+    'pageId': '2.6.1',
+    'display': true,
+    'authority': ['ROLE_MECM_ADMIN']
+  }
 ]
 
 export default NavData
