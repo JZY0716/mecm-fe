@@ -27,6 +27,8 @@ let inventoryApi = PROXY_PREFIX_CURRENTSERVER + '/mecm-inventory/inventory/v1'
 let apmApi = PROXY_PREFIX_CURRENTSERVER + '/mecm-apm/apm/v1'
 let appoApi = PROXY_PREFIX_CURRENTSERVER + '/mecm-appo/appo/v1'
 
+let appInstanceApi = inventoryApi
+
 let inventoryUrl = ['/applcms', '/mechosts', '/appstores', '/apprulemanagers', '/mepms']
 
 axios.interceptors.request.use(
@@ -350,7 +352,18 @@ let check = {
     })
   }
 }
+let signaling = {
+  createPolicy (params) {
+    return POST(PROXY_PREFIX_CURRENTSERVER + '/apprulemgr/v1/signaling/policies', params)
+  }
+}
 
+let appInstance = {
+
+  getAllAppinstanceIds () {
+    return GET(appInstanceApi + '/mecapplication/all-appinstance-ids')
+  }
+}
 export {
   GET,
   POST,
@@ -361,5 +374,7 @@ export {
   appo,
   inventory,
   check,
-  PROXY_PREFIX_CURRENTSERVER
+  PROXY_PREFIX_CURRENTSERVER,
+  signaling,
+  appInstance
 }
