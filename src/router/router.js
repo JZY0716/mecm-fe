@@ -68,6 +68,11 @@ export default new Router({
       path: '/mecm/resource/manager',
       name: 'resource',
       component: () => import('../pages/resource/ResourceMgr.vue')
+    },
+    {
+      path: '/mecm/signaling/manager',
+      name: 'signaling',
+      component: () => import('../pages/signaling/signaling.vue')
     }
   ]
 })
