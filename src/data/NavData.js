@@ -82,7 +82,7 @@ const NavData = [
     'path': '/mecm/resource/manager',
     'pageId': '2.5.1',
     'display': false
-  }
+  },
   {
     'id': '2.6',
     'name': 'signaling manager',
